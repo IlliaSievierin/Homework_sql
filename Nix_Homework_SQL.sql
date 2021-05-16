@@ -1,57 +1,57 @@
---> 1. Как называется самый дорогой товар из товарной категории №1?
+п»ї--> 1. РљР°Рє РЅР°Р·С‹РІР°РµС‚СЃСЏ СЃР°РјС‹Р№ РґРѕСЂРѕРіРѕР№ С‚РѕРІР°СЂ РёР· С‚РѕРІР°СЂРЅРѕР№ РєР°С‚РµРіРѕСЂРёРё в„–1?
 SELECT TOP 1
 	ProductName
 FROM dbo.Products
 WHERE CategoryID = 1
 ORDER BY UnitPrice DESC;
 
---> 2. В какие города заказы комплектовались более десяти дней?
+--> 2. Р’ РєР°РєРёРµ РіРѕСЂРѕРґР° Р·Р°РєР°Р·С‹ РєРѕРјРїР»РµРєС‚РѕРІР°Р»РёСЃСЊ Р±РѕР»РµРµ РґРµСЃСЏС‚Рё РґРЅРµР№?
 SELECT DISTINCT 
 	ShipCity
 FROM dbo.Orders
 WHERE DATEDIFF(day,OrderDate,ShippedDate)>10;
 
---> 3. Какие покупатели до сих пор ждут отгрузки своих заказов?
+--> 3. РљР°РєРёРµ РїРѕРєСѓРїР°С‚РµР»Рё РґРѕ СЃРёС… РїРѕСЂ Р¶РґСѓС‚ РѕС‚РіСЂСѓР·РєРё СЃРІРѕРёС… Р·Р°РєР°Р·РѕРІ?
 SELECT
 	ContactName
 FROM dbo.Customers INNER JOIN dbo.Orders ON Customers.CustomerID=Orders.CustomerID
 WHERE ShippedDate IS NULL;
 	
---> 4. Скольких покупателей обслужил продавец, лидирующий по общему количеству заказов?
+--> 4. РЎРєРѕР»СЊРєРёС… РїРѕРєСѓРїР°С‚РµР»РµР№ РѕР±СЃР»СѓР¶РёР» РїСЂРѕРґР°РІРµС†, Р»РёРґРёСЂСѓСЋС‰РёР№ РїРѕ РѕР±С‰РµРјСѓ РєРѕР»РёС‡РµСЃС‚РІСѓ Р·Р°РєР°Р·РѕРІ?
 SELECT TOP 1
 	COUNT(CustomerID) count_customer
 FROM dbo.Orders
 GROUP BY EmployeeID
 ORDER BY count_customer DESC;
 
---> 5. Сколько французских городов обслужил продавец №1 в 1997-м?
+--> 5. РЎРєРѕР»СЊРєРѕ С„СЂР°РЅС†СѓР·СЃРєРёС… РіРѕСЂРѕРґРѕРІ РѕР±СЃР»СѓР¶РёР» РїСЂРѕРґР°РІРµС† в„–1 РІ 1997-Рј?
 SELECT 
 	COUNT(ShipCity) count_sity
 FROM dbo.Orders
 WHERE ShipCountry = 'France' AND EmployeeID = 1 AND YEAR(ShippedDate) = 1997
 GROUP BY ShipCountry;
 
---> 6. В каких странах есть города, в которые было отправлено больше двух заказов?
+--> 6. Р’ РєР°РєРёС… СЃС‚СЂР°РЅР°С… РµСЃС‚СЊ РіРѕСЂРѕРґР°, РІ РєРѕС‚РѕСЂС‹Рµ Р±С‹Р»Рѕ РѕС‚РїСЂР°РІР»РµРЅРѕ Р±РѕР»СЊС€Рµ РґРІСѓС… Р·Р°РєР°Р·РѕРІ?
 SELECT DISTINCT
 	ShipCountry 
 FROM dbo.Orders 
 GROUP BY ShipCountry, ShipCity 
 HAVING COUNT(OrderID) > 2;
 
---> 7. Перечислите названия товаров, которые были проданы в количестве менее 1000 штук (quantity)?
+--> 7. РџРµСЂРµС‡РёСЃР»РёС‚Рµ РЅР°Р·РІР°РЅРёСЏ С‚РѕРІР°СЂРѕРІ, РєРѕС‚РѕСЂС‹Рµ Р±С‹Р»Рё РїСЂРѕРґР°РЅС‹ РІ РєРѕР»РёС‡РµСЃС‚РІРµ РјРµРЅРµРµ 1000 С€С‚СѓРє (quantity)?
 SELECT 
 	ProductName
 FROM dbo.Products INNER JOIN dbo.[Order Details] ON dbo.Products.ProductID = dbo.[Order Details].ProductID
 GROUP BY ProductName
 HAVING SUM(Quantity)<1000;
  
---> 8. Как зовут покупателей, которые делали заказы с доставкой в другой город (не в тот, в котором они прописаны)?
+--> 8. РљР°Рє Р·РѕРІСѓС‚ РїРѕРєСѓРїР°С‚РµР»РµР№, РєРѕС‚РѕСЂС‹Рµ РґРµР»Р°Р»Рё Р·Р°РєР°Р·С‹ СЃ РґРѕСЃС‚Р°РІРєРѕР№ РІ РґСЂСѓРіРѕР№ РіРѕСЂРѕРґ (РЅРµ РІ С‚РѕС‚, РІ РєРѕС‚РѕСЂРѕРј РѕРЅРё РїСЂРѕРїРёСЃР°РЅС‹)?
 SELECT DISTINCT
 	ContactName
 FROM dbo.Customers INNER JOIN dbo.Orders ON dbo.Customers.CustomerID = dbo.Orders.CustomerID
 WHERE City <> ShipCity;
 
---> 9. Товарами из какой категории в 1997-м году заинтересовалось больше всего компаний, имеющих факс?
+--> 9. РўРѕРІР°СЂР°РјРё РёР· РєР°РєРѕР№ РєР°С‚РµРіРѕСЂРёРё РІ 1997-Рј РіРѕРґСѓ Р·Р°РёРЅС‚РµСЂРµСЃРѕРІР°Р»РѕСЃСЊ Р±РѕР»СЊС€Рµ РІСЃРµРіРѕ РєРѕРјРїР°РЅРёР№, РёРјРµСЋС‰РёС… С„Р°РєСЃ?
 SELECT TOP 1
 	CategoryName,COUNT(EmployeeID) count_employee 
 FROM dbo.Categories 
@@ -63,7 +63,7 @@ WHERE YEAR(OrderDate) = 1997 AND Fax IS NOT NULL
 GROUP BY CategoryName
 ORDER BY count_employee DESC;
 
---> 10. Сколько всего единиц товаров (то есть, штук – Quantity) продал каждый продавец (имя, фамилия) осенью 1996 года?
+--> 10. РЎРєРѕР»СЊРєРѕ РІСЃРµРіРѕ РµРґРёРЅРёС† С‚РѕРІР°СЂРѕРІ (С‚Рѕ РµСЃС‚СЊ, С€С‚СѓРє вЂ“ Quantity) РїСЂРѕРґР°Р» РєР°Р¶РґС‹Р№ РїСЂРѕРґР°РІРµС† (РёРјСЏ, С„Р°РјРёР»РёСЏ) РѕСЃРµРЅСЊСЋ 1996 РіРѕРґР°?
 SELECT
 	FirstName,LastName,SUM(Quantity) sum_product
 FROM dbo.[Order Details] 
